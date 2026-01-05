@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>PHZ XITER</title>
+
+<!-- ESSENCIAL PRA CELULAR / GITHUB -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:black;color:white;height:100vh;overflow:hidden}
+
+/* FUNDO */
+.particles span{
+  position:absolute;
+  width:6px;height:6px;
+  background:#ff00ff;
+  border-radius:50%;
+  animation:float 12s linear infinite;
+  opacity:.8;
+}
+.particles span:nth-child(1){left:10%;animation-delay:0s}
+.particles span:nth-child(2){left:30%;animation-delay:2s}
+.particles span:nth-child(3){left:50%;animation-delay:4s}
+.particles span:nth-child(4){left:70%;animation-delay:6s}
+.particles span:nth-child(5){left:90%;animation-delay:8s}
+
+@keyframes float{
+  from{transform:translateY(110vh)}
+  to{transform:translateY(-10vh)}
+}
+
+/* CARD */
+.card{
+  width:330px;
+  padding:20px;
+  background:rgba(15,0,25,.92);
+  border:2px solid #ff00ff;
+  border-radius:15px;
+  box-shadow:0 0 25px #ff00ff;
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  background:#ff00ff;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+select,input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+
+/* ERRO */
+#error{
+  display:none;
+  color:red;
+  text-align:center;
+  margin-top:8px;
+  font-weight:bold;
+}
+
+/* ANIMAÇÃO ENTRADA */
+.enter{animation:enter .25s ease-out}
+@keyframes enter{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* OPÇÕES */
+.opts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:10px 0;
+  font-size:14px;
+}
+
+/* AIMFOV */
+#fovCircle{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:3px solid red;
+  display:none;
+  pointer-events:none;
+  animation:rgb 2s linear infinite;
+}
+@keyframes rgb{
+  0%{border-color:red}
+  50%{border-color:cyan}
+  100%{border-color:red}
+}
+
+/* MIRA */
+#crosshair{
+  position:fixed;
+  top:50%;left:50%;
+  width:30px;height:30px;
+  transform:translate(-50%,-50%);
+  display:none;
+  pointer-events:none;
+}
+#crosshair:before,#crosshair:after{
+  content:"";
+  position:absolute;
+  background:red;
+}
+#crosshair:before{width:30px;height:2px;top:14px}
+#crosshair:after{width:2px;height:30px;left:14px}
+
+/* BYPASS */
+.bypass{
+  background:#ff00ff;
+  color:black;
+  text-align:center;
+  padding:6px;
+  border-radius:8px;
+  margin:8px 0;
+  font-weight:bold;
+}
+
+/* INJETAR */
+#injectBox{display:none}
+.inject-btn{
+  background:black;
+  color:#ff00ff;
+  border:2px solid #ff00ff;
+}
+
+/* PAINEL */
+#panel{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="particles">
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<!-- LOGIN -->
+<div class="card" id="login">
+  <h2 style="text-align:center">LOGIN</h2>
+  <input id="keyInput" placeholder="Digite sua key">
+  <div id="error">KEY INVÁLIDA ❌</div>
+  <button onclick="entrar()">ENTRAR</button>
+</div>
+
+<!-- PAINEL -->
+<div class="card" id="panel">
+  <h2 style="color:#ff00ff;text-align:center">PHZ XITER</h2>
+
+  <div class="opts">
+    <label><input type="checkbox"> Aimbot</label>
+    <label><input type="checkbox"> NoRecol</label>
+    <label><input type="checkbox"> AimLock</label>
+    <label><input type="checkbox"> Calibrar Mira</label>
+  </div>
+
+  <div class="bypass">BYPASS ATIVO</div>
+
+  <label>AimFOV: <span id="val">180</span></label>
+  <input type="range" min="50" max="360" value="180" oninput="fov(this.value)">
+
+  <select>
+    <option>Quadril</option>
+  </select>
+
+  <button onclick="toggleFov()">ATIVAR AIMFOV</button>
+  <button onclick="toggleAimbot()">ATIVAR AIMBOT</button>
+
+  <button onclick="toggleInject()">INJETAR</button>
+  <div id="injectBox">
+    <button class="inject-btn" onclick="openFF()">FF NORMAL</button>
+    <button class="inject-btn" onclick="openFFMax()">FF MAX</button>
+  </div>
+</div>
+
+<div id="fovCircle" style="width:180px;height:180px"></div>
+<div id="crosshair"></div>
+
+<script>
+const login = document.getElementById("login");
+const panel = document.getElementById("panel");
+const error = document.getElementById("error");
+const val = document.getElementById("val");
+const fovCircle = document.getElementById("fovCircle");
+const crosshair = document.getElementById("crosshair");
+const injectBox = document.getElementById("injectBox");
+
+function entrar(){
+  const key = document.getElementById("keyInput").value.trim();
+  if(key === "painelgratis"){
+    error.style.display="none";
+    login.style.display="none";
+    panel.style.display="block";
+    panel.classList.add("enter");
+  }else{
+    error.style.display="block";
+  }
+}
+
+function fov(v){
+  val.innerText=v;
+  fovCircle.style.width=v+"px";
+  fovCircle.style.height=v+"px";
+}
+
+function toggleFov(){
+  fovCircle.style.display =
+    fovCircle.style.display === "none" ? "block" : "none";
+}
+
+function toggleAimbot(){
+  crosshair.style.display =
+    crosshair.style.display === "none" ? "block" : "none";
+}
+
+function toggleInject(){
+  injectBox.style.display =
+    injectBox.style.display === "none" ? "block" : "none";
+}
+
+function openFF(){
+  window.location.href =
+  "intent://launch/#Intent;package=com.dts.freefireth;end";
+}
+function openFFMax(){
+  window.location.href =
+  "intent://launch/#Intent;package=com.dts.freefiremax;end";
+}
+</script>
+
+</body>
+</html>
